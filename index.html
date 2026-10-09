@@ -1,0 +1,326 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Projeto Ascensão</title>
+
+<style>
+body {
+    background:#111;
+    color:white;
+    font-family:Arial;
+    text-align:center;
+}
+
+button {
+    font-size:20px;
+    padding:15px;
+    margin:8px;
+    border-radius:12px;
+    cursor:pointer;
+}
+
+.card {
+    background:#222;
+    padding:15px;
+    margin:15px;
+    border-radius:15px;
+}
+
+.lock {
+    color:#777;
+}
+
+</style>
+
+</head>
+
+<body>
+
+<h1>⚔️ Projeto Ascensão</h1>
+
+<div class="card">
+<h2>🪙 Moedas: <span id="moedas">0</span></h2>
+<h2>⭐ XP: <span id="xp">0</span></h2>
+<h2>📈 Nível: <span id="nivel">1</span></h2>
+</div>
+
+
+<div class="card">
+
+<h2>Treino</h2>
+
+<button onclick="flexao()">
+💪 Fazer Flexão
+</button>
+
+<p>
+Flexões: <span id="flexoes">0</span>
+</p>
+
+</div>
+
+
+
+<div class="card">
+
+<h2>🔓 Habilidades</h2>
+
+<p id="habilidades"></p>
+
+</div>
+
+
+
+
+<div class="card">
+
+<h2>🛒 Loja</h2>
+
+<button onclick="comprar('Chocolate',20)">
+🍫 Chocolate - 20 moedas
+</button>
+
+<br>
+
+<button onclick="comprar('Bolo',50)">
+🍰 Bolo - 50 moedas
+</button>
+
+<br>
+
+<button onclick="comprar('Pizza',100)">
+🍕 Pizza - 100 moedas
+</button>
+
+<p id="mensagem"></p>
+
+</div>
+
+
+
+
+<div class="card">
+
+<h2>🏆 Conquistas</h2>
+
+<p id="conquistas"></p>
+
+</div>
+
+
+
+
+<div class="card">
+
+<h2>📊 Estatísticas</h2>
+
+<p id="stats"></p>
+
+</div>
+
+
+
+
+<script>
+
+
+let jogo = {
+
+moedas:0,
+xp:0,
+nivel:1,
+flexoes:0,
+compras:[],
+conquistas:[]
+
+};
+
+
+
+function salvar(){
+
+localStorage.setItem(
+"ascensaoSave",
+JSON.stringify(jogo)
+);
+
+}
+
+
+
+function carregar(){
+
+let save = localStorage.getItem("ascensaoSave");
+
+if(save){
+
+jogo = JSON.parse(save);
+
+}
+
+}
+
+
+function flexao(){
+
+jogo.flexoes++;
+
+jogo.moedas++;
+
+jogo.xp += 2;
+
+
+verificarNivel();
+
+verificarConquistas();
+
+salvar();
+
+atualizar();
+
+}
+
+
+
+
+function verificarNivel(){
+
+
+let novoNivel = Math.floor(jogo.xp / 100)+1;
+
+
+if(novoNivel > jogo.nivel){
+
+jogo.nivel = novoNivel;
+
+alert(
+"🎉 Você subiu para o nível "+jogo.nivel+"!"
+);
+
+}
+
+}
+
+
+
+
+function comprar(nome,preco){
+
+
+if(jogo.moedas >= preco){
+
+jogo.moedas -= preco;
+
+jogo.compras.push(nome);
+
+document.getElementById("mensagem").innerHTML =
+"Você comprou "+nome+"!";
+
+}
+
+else{
+
+document.getElementById("mensagem").innerHTML =
+"Moedas insuficientes!";
+
+}
+
+
+salvar();
+
+atualizar();
+
+}
+
+
+
+
+function verificarConquistas(){
+
+
+if(jogo.flexoes >= 10 &&
+!jogo.conquistas.includes("Primeiro treino")){
+
+jogo.conquistas.push("Primeiro treino");
+
+}
+
+
+if(jogo.flexoes >=100 &&
+!jogo.conquistas.includes("100 flexões")){
+
+jogo.conquistas.push("💪 100 flexões");
+
+}
+
+
+}
+
+
+
+
+function atualizar(){
+
+
+document.getElementById("moedas").innerHTML =
+jogo.moedas;
+
+
+document.getElementById("xp").innerHTML =
+jogo.xp;
+
+
+document.getElementById("nivel").innerHTML =
+jogo.nivel;
+
+
+document.getElementById("flexoes").innerHTML =
+jogo.flexoes;
+
+
+
+let habilidades="";
+
+
+if(jogo.nivel>=1)
+habilidades+="🦵 Agachamento<br>";
+
+if(jogo.nivel>=2)
+habilidades+="💪 Flexão<br>";
+
+if(jogo.nivel>=5)
+habilidades+="🔥 Burpee<br>";
+
+if(jogo.nivel>=10)
+habilidades+="⚔️ Flexão explosiva<br>";
+
+document.getElementById("habilidades")
+.innerHTML=habilidades;
+
+
+
+document.getElementById("conquistas")
+.innerHTML =
+jogo.conquistas.join("<br>") || "Nenhuma ainda";
+
+
+
+document.getElementById("stats")
+.innerHTML =
+"Flexões totais: "+jogo.flexoes+
+"<br>Compras: "+jogo.compras.length;
+
+
+}
+
+
+
+carregar();
+
+atualizar();
+
+
+</script>
+
+</body>
+</html>
